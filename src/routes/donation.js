@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const StellarService = require('../services/StellarService');
+const Transaction = require('./models/transaction');
 
 const stellarService = new StellarService({
   network: process.env.STELLAR_NETWORK || 'testnet',
@@ -38,7 +39,7 @@ router.post('/verify', async (req, res) => {
         code: 'VERIFICATION_FAILED',
         message: error.message
       }
-const Transaction = require('./models/transaction');
+
 
 /**
  * POST /donations
@@ -46,6 +47,19 @@ const Transaction = require('./models/transaction');
  */
 router.post('/', (req, res) => {
   try {
+
+    const idempotencyKey = req.headers['idempotency-key'];
+
+     if (!idempotencyKey) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'IDEMPOTENCY_KEY_REQUIRED',
+          message: 'Idempotency key is required'
+        }
+      });
+    }
+
     const { amount, donor, recipient } = req.body;
 
     if (!amount || !recipient) {
@@ -72,7 +86,8 @@ router.post('/', (req, res) => {
     const transaction = Transaction.create({
       amount: parseFloat(amount),
       donor: donor || 'Anonymous',
-      recipient
+      recipient,
+      idempotencyKey
     });
 
     res.status(201).json({
