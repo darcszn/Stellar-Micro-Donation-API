@@ -68,5 +68,3 @@ The lifecycle of a typical request (e.g., sending a micro-donation) follows thes
 - **Error Abstraction:** Low-level Stellar errors (Horizon codes) are caught in the service layer and translated into user-friendly messages by the controller.
 - **Environment Driven:** All sensitive URLs and network settings are managed via `.env` files.
 
-## Language 
-JAVASCRIPT
