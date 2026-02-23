@@ -19,8 +19,8 @@ describe('MockStellarService', () => {
 
       expect(wallet).toHaveProperty('publicKey');
       expect(wallet).toHaveProperty('secretKey');
-      expect(wallet.publicKey).toMatch(/^G[A-Z0-9]{54}$/);
-      expect(wallet.secretKey).toMatch(/^S[A-Z0-9]{54}$/);
+      expect(wallet.publicKey).toMatch(/^G[A-Z2-7]{55}$/);
+      expect(wallet.secretKey).toMatch(/^S[A-Z2-7]{55}$/);
     });
 
     test('should create multiple unique wallets', async () => {
