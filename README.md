@@ -268,10 +268,6 @@ node test-recurring-donations.js
 
 - **[API Examples](docs/API_EXAMPLES.md)** - Complete request/response examples for all endpoints
 - [Architecture Documentation](docs/ARCHITECTURE.md) - Detailed system architecture
-- [API Flow Diagram](API%20flow%20diagram.txt) - API request flow
-- [Mock Stellar Guide](MOCK_STELLAR_GUIDE.md) - Using mock Stellar service
-- [Quick Start Guide](QUICK_START.md) - Getting started quickly
-- [Label-Based CI Enforcement](docs/LABEL_ENFORCEMENT.md) - Extended CI checks for test/security PRs
 - [API Flow Diagram](docs/API_FLOW.md) - API request flow
 - [Quick Start Guide](docs/guides/QUICK_START.md) - Getting started quickly
 - [Mock Stellar Guide](docs/guides/MOCK_STELLAR_GUIDE.md) - Using mock Stellar service
