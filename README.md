@@ -250,6 +250,7 @@ node test-recurring-donations.js
 
 - [Architecture Documentation](docs/ARCHITECTURE.md) - Detailed system architecture
 - [API Flow Diagram](API%20flow%20diagram.txt) - API request flow
+- [Pre-Deployment Checklist](docs/guides/PRE_DEPLOYMENT_CHECKLIST.md) - Production deployment verification
 - [Mock Stellar Guide](MOCK_STELLAR_GUIDE.md) - Using mock Stellar service
 - [Quick Start Guide](QUICK_START.md) - Getting started quickly
 
