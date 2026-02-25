@@ -77,15 +77,16 @@ const PORT = config.port;
 async function startServer() {
   try {
     await initializeApiKeysTable();
-    log.info('APP', 'API keys table initialized');
   } catch (error) {
     log.error('APP', 'Failed to initialize API keys table', { error: error.message });
   }
 
   app.listen(PORT, () => {
-    log.info('APP', 'Stellar Micro-Donation API running', { port: PORT });
-    log.info('APP', 'Active network configured', { network: config.network });
-    log.info('APP', 'Health check endpoint ready', { url: `http://localhost:${PORT}/health` });
+    log.info('APP', 'API started', { 
+      port: PORT, 
+      network: config.network,
+      healthCheck: `http://localhost:${PORT}/health`
+    });
 
     // Start the recurring donation scheduler
     recurringDonationScheduler.start();
