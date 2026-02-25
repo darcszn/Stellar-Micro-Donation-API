@@ -1,6 +1,12 @@
+/**
+ * Stats Routes
+ * Thin controllers that orchestrate service calls
+ * All business logic delegated to StatsService
+ */
+
 const express = require('express');
 const router = express.Router();
-const StatsService = require('./services/StatsService');
+const StatsService = require('../services/StatsService');
 const { validateDateRange } = require('../middleware/validation');
 const { checkPermission } = require('../middleware/rbac');
 const { PERMISSIONS } = require('../utils/permissions');
@@ -180,30 +186,11 @@ router.get('/recipients', checkPermission(PERMISSIONS.STATS_READ), validateDateR
  * Get analytics fee summary for reporting
  * Query params: startDate, endDate (ISO format)
  */
-router.get('/analytics-fees', checkPermission(PERMISSIONS.STATS_READ), (req, res) => {
+router.get('/analytics-fees', checkPermission(PERMISSIONS.STATS_READ), validateDateRange, (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-
-    if (!startDate || !endDate) {
-      return res.status(400).json({
-        error: 'Missing required query parameters: startDate, endDate (ISO format)'
-      });
-    }
-
     const start = new Date(startDate);
     const end = new Date(endDate);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return res.status(400).json({
-        error: 'Invalid date format. Use ISO format (YYYY-MM-DD or ISO 8601)'
-      });
-    }
-
-    if (start > end) {
-      return res.status(400).json({
-        error: 'startDate must be before endDate'
-      });
-    }
 
     const stats = StatsService.getAnalyticsFeeStats(start, end);
 
@@ -270,31 +257,6 @@ router.get('/wallet/:walletAddress/analytics', checkPermission(PERMISSIONS.STATS
     res.json({
       success: true,
       data: analytics
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Failed to retrieve wallet analytics',
-      message: error.message
-    });
-  }
-});
-
-router.get('/wallet/:walletAddress/analytics', checkPermission(PERMISSIONS.STATS_READ), async (req, res) => {
-  try {
-    const { walletAddress } = req.params;
-
-    // Trigger the new aggregation logic
-    const liveStats = await StatsService.aggregateFromNetwork(walletAddress);
-
-    // Combine with your existing local transaction analytics
-    const localAnalytics = StatsService.getWalletAnalytics(walletAddress);
-
-    res.json({
-      success: true,
-      data: {
-        blockchain: liveStats,
-        local: localAnalytics
-      }
     });
   } catch (error) {
     res.status(500).json({
