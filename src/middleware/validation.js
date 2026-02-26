@@ -161,7 +161,7 @@ const validateDateRange = (req, res, next) => {
 
   // Internal validator check: Ensures start is before end
   const validation = isValidDateRange(startDate, endDate);
-  
+
   if (!validation.valid) {
     return res.status(400).json({
       success: false,

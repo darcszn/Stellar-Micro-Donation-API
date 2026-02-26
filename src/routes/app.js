@@ -89,7 +89,7 @@ app.get('/health', async (req, res) => {
 // Abuse detection stats endpoint (admin only)
 app.get('/abuse-signals', require('../middleware/rbac').requireAdmin(), (req, res) => {
   const abuseDetector = require('../utils/abuseDetector');
-  
+
   res.json({
     success: true,
     data: abuseDetector.getStats(),
@@ -152,8 +152,16 @@ async function startServer() {
       recurringDonationScheduler.start();
       reconciliationService.start();
 
-      // Final startup confirmation
-      log.info("APP", "🌟 Server ready and accepting connections", {
+  app.listen(PORT, () => {
+    log.info('APP', 'API started', {
+      port: PORT,
+      network: config.network,
+      healthCheck: `http://localhost:${PORT}/health`
+    });
+
+    if (log.isDebugMode) {
+      log.debug('APP', 'Debug mode enabled - verbose logging active');
+      log.debug('APP', 'Configuration loaded', {
         port: PORT,
         network: stellarConfig.network,
         healthCheck: `http://localhost:${PORT}/health`,
@@ -161,39 +169,12 @@ async function startServer() {
       });
     });
 
-    // Graceful shutdown handling
-    const gracefulShutdown = async (signal) => {
-      logShutdownDiagnostics(signal);
+    // Start the recurring donation scheduler
+    recurringDonationScheduler.start();
 
-      server.close(() => {
-        log.info("SHUTDOWN", "HTTP server closed");
-
-        // Stop background services
-        recurringDonationScheduler.stop();
-        reconciliationService.stop();
-
-        process.exit(0);
-      });
-
-      // Force shutdown after 10 seconds
-      setTimeout(() => {
-        log.error("SHUTDOWN", "Forced shutdown after timeout");
-        process.exit(1);
-      }, 10000);
-    };
-
-    // Handle shutdown signals
-    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
-    return server;
-  } catch (error) {
-    log.error("APP", "❌ Failed to start server", {
-      error: error.message,
-      stack: config.server.isDevelopment ? error.stack : undefined,
-    });
-    process.exit(1);
-  }
+    // Start the transaction reconciliation service
+    reconciliationService.start();
+  });
 }
 
 if (require.main === module) {

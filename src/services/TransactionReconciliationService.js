@@ -31,7 +31,7 @@ class TransactionReconciliationService {
 
     this.isRunning = true;
     this.reconcile();
-    
+
     this.intervalId = setInterval(() => {
       this.reconcile();
     }, this.checkInterval);
@@ -57,12 +57,10 @@ class TransactionReconciliationService {
 
     this.reconciliationInProgress = true;
 
-    const requestId = uuidv4();
-    return log.runWithContext({ requestId }, async () => {
-      try {
-        const pendingTxs = Transaction.getByStatus(TRANSACTION_STATES.PENDING);
-        const submittedTxs = Transaction.getByStatus(TRANSACTION_STATES.SUBMITTED);
-      
+    try {
+      const pendingTxs = Transaction.getByStatus(TRANSACTION_STATES.PENDING);
+      const submittedTxs = Transaction.getByStatus(TRANSACTION_STATES.SUBMITTED);
+
       const txsToCheck = [...pendingTxs, ...submittedTxs];
 
       if (txsToCheck.length === 0) {

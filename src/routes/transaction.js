@@ -22,7 +22,7 @@ router.get('/', checkPermission(PERMISSIONS.TRANSACTIONS_READ), async (req, res)
     const { limit = 10, offset = 0 } = req.query;
 
     const paginationValidation = validatePagination(limit, offset);
-    
+
     if (!paginationValidation.valid) {
       return res.status(400).json({
         success: false,
@@ -33,9 +33,9 @@ router.get('/', checkPermission(PERMISSIONS.TRANSACTIONS_READ), async (req, res)
       });
     }
 
-    const result = Transaction.getPaginated({ 
-      limit: paginationValidation.limit, 
-      offset: paginationValidation.offset 
+    const result = Transaction.getPaginated({
+      limit: paginationValidation.limit,
+      offset: paginationValidation.offset
     });
 
     return res.status(200).json({

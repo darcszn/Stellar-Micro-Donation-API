@@ -31,7 +31,7 @@ router.post('/create', checkPermission(PERMISSIONS.STREAM_CREATE), async (req, r
       { donorPublicKey, recipientPublicKey, amount, frequency },
       ['donorPublicKey', 'recipientPublicKey', 'amount', 'frequency']
     );
-    
+
     if (!requiredValidation.valid) {
       return res.status(400).json({
         success: false,
@@ -94,7 +94,7 @@ router.post('/create', checkPermission(PERMISSIONS.STREAM_CREATE), async (req, r
     // Calculate next execution date based on frequency
     const now = new Date();
     const nextExecutionDate = new Date(now);
-    
+
     switch (frequency.toLowerCase()) {
       case 'daily':
         nextExecutionDate.setDate(nextExecutionDate.getDate() + 1);
@@ -109,15 +109,15 @@ router.post('/create', checkPermission(PERMISSIONS.STREAM_CREATE), async (req, r
 
     // Insert recurring donation schedule
     const result = await Database.run(
-      `INSERT INTO recurring_donations 
-       (donorId, recipientId, amount, frequency, nextExecutionDate, status) 
+      `INSERT INTO recurring_donations
+       (donorId, recipientId, amount, frequency, nextExecutionDate, status)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [donor.id, recipient.id, parseFloat(amount), frequency.toLowerCase(), nextExecutionDate.toISOString(), SCHEDULE_STATUS.ACTIVE]
     );
 
     // Fetch the created schedule
     const schedule = await Database.get(
-      `SELECT 
+      `SELECT
         rd.id,
         rd.amount,
         rd.frequency,
@@ -160,7 +160,7 @@ router.post('/create', checkPermission(PERMISSIONS.STREAM_CREATE), async (req, r
 router.get('/schedules', checkPermission(PERMISSIONS.STREAM_READ), async (req, res) => {
   try {
     const schedules = await Database.query(
-      `SELECT 
+      `SELECT
         rd.id,
         rd.amount,
         rd.frequency,
@@ -194,7 +194,7 @@ router.get('/schedules', checkPermission(PERMISSIONS.STREAM_READ), async (req, r
 router.get('/schedules/:id', checkPermission(PERMISSIONS.STREAM_READ), async (req, res) => {
   try {
     const schedule = await Database.get(
-      `SELECT 
+      `SELECT
         rd.id,
         rd.amount,
         rd.frequency,
